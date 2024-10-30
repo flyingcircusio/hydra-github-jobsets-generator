@@ -107,6 +107,7 @@ mod tests {
                 repo: Repo {
                     git_url: String::from("head-git_url"),
                     ssh_url: String::from("head-ssh_url"),
+                    html_url: String::from("head-html_url"),
                 },
                 user: User {
                     login: String::from("head-login"),
@@ -124,6 +125,7 @@ mod tests {
                 repo: Repo {
                     git_url: String::from("base-git_url"),
                     ssh_url: String::from("base-ssh_url"),
+                    html_url: String::from("base-html_url"),
                 },
                 user: User {
                     login: String::from("base-login"),
