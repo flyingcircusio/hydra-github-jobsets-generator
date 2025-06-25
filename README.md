@@ -4,6 +4,36 @@ This tool uses Hydra's [_declarative jobsets_](https://github.com/NixOS/hydra/bl
 
 Configuring declarative jobsets use several points of indirection, and this repository's goal is to simplify and streamline the setup process.
 
+## Testing
+
+In this example, the tool will generate a jobset for [fc-nixos](https://github.com/flyingcircusio/fc-nixos).
+
+First, fetch all open PRs from the API and transform it into the format Hydra expects:
+
+```
+curl "https://api.github.com/repos/flyingcircusio/fc-nixos/pulls?per_page=100" | jq 'map({(.number|tostring): .})|add' > prs.json
+```
+
+This assumes checkouts of `nixpkgs` and `fc-nixos` in `../`. Replace with the path to the checkouts on your machine.
+Generate the declarative jobset JSON with the following command:
+
+```
+nix-build jobset/generate.nix \
+    --arg nixpkgs ../nixpkgs \
+    --arg generator ./. \
+    --arg pull_requests ./data.json \
+    --arg generator_config ../fc-nixos \
+    --arg ignore-prs-from-forks true
+```
+
+For faster iteration times, it makes sense to work with `cargo run`:
+
+```
+nix-shell
+cd jobset-generator
+cargo run -- ../data.json ../../fc-nixos/.hydra/config.json  --ignore-prs-from-forks|jq 'length'
+```
+
 ## How Declarative Jobsets Work
 
 The goal of Declarative Jobsets is to have a Hydra Project whose Jobsets are entirely defined outside of Hydra's interface.
