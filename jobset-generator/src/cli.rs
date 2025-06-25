@@ -14,6 +14,8 @@ use crate::{
 struct Args {
     pull_requests_file: String,
     config_file: String,
+    #[structopt(short, long)]
+    ignore_prs_from_forks: bool,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -98,7 +100,7 @@ pub fn cli() -> Result<()> {
         make_legacy_definition
     };
 
-    let jobsets = build_pr_jobsets(args.pull_requests_file, job_config, &make_definition)?;
+    let jobsets = build_pr_jobsets(args.pull_requests_file, job_config, &make_definition, args.ignore_prs_from_forks)?;
     let json = serde_json::to_string_pretty(&jobsets)?;
 
     println!("{}", json);

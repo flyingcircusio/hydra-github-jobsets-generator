@@ -43,6 +43,7 @@ pub fn build_pr_jobsets(
     pull_requests_path: String,
     job_config: JobConfig,
     make_definition: &MakeDefinition,
+    ignore_prs_from_forks: bool,
 ) -> Result<HydraJobsets> {
     let pull_requests_file = File::open(pull_requests_path)?;
     let pull_requests_rdr = BufReader::new(pull_requests_file);
@@ -50,6 +51,9 @@ pub fn build_pr_jobsets(
 
     let mut jobs = HydraJobsets::new();
     for (key, pr) in pull_requests {
+        if ignore_prs_from_forks && pr.base.repo.full_name != pr.head.repo.full_name {
+            continue;
+        }
         if let Some(job) = make_job(pr, job_config.clone(), make_definition) {
             let flattened_job = job.flatten();
             jobs.insert(format!("pr-{}", key), flattened_job);
@@ -108,6 +112,7 @@ mod tests {
                     git_url: String::from("head-git_url"),
                     ssh_url: String::from("head-ssh_url"),
                     html_url: String::from("head-html_url"),
+                    full_name: String::from("flyingcircusio/fc-nixos")
                 },
                 user: User {
                     login: String::from("head-login"),
@@ -126,6 +131,7 @@ mod tests {
                     git_url: String::from("base-git_url"),
                     ssh_url: String::from("base-ssh_url"),
                     html_url: String::from("base-html_url"),
+                    full_name: String::from("flyingcircusio/fc-nixos")
                 },
                 user: User {
                     login: String::from("base-login"),

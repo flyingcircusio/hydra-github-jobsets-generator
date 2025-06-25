@@ -32,6 +32,7 @@ pub struct Repo {
     pub git_url: String,
     pub ssh_url: String,
     pub html_url: String,
+    pub full_name: String,
 }
 
 #[derive(Deserialize)]
