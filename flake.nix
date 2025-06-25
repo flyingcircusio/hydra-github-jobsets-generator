@@ -45,6 +45,8 @@
                 (terraform_1.withPlugins (p: [
                   p.hydra
                 ]))
+              ] ++ lib.optionals stdenv.isDarwin [
+                libiconv
               ];
           }
         );
